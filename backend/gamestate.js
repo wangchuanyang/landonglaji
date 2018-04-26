@@ -122,7 +122,7 @@ const gameState = {
   },
 
   resetGameState () {
-    logger.warn('In GameState resetGameState()')
+    //logger.warn('In GameState resetGameState()')
     this.me = [-1, -1, 0, -360]
     this.meGuid = -100
     this.meAttachedTo = -1000
@@ -163,7 +163,7 @@ const gameState = {
     this.playbackIndex = 0
     this.playbackDoneMs = 0
     this.playbackStartTS = events[0].time
-    logger.warn({ eventCount: events.length }, 'Playback events feeded')
+    //logger.warn({ eventCount: events.length }, 'Playback events feeded')
   },
 
   startPlayback (speed = 1.0, eventCount) {
@@ -176,7 +176,7 @@ const gameState = {
     if (eventCount) {
       this.playbackRemaining = eventCount
     }
-    logger.warn({ interval, speed, toPlayCount: eventCount }, 'Started playback')
+    //logger.warn({ interval, speed, toPlayCount: eventCount }, 'Started playback')
     this._playbackChunk(interval)
   },
 
@@ -194,7 +194,7 @@ const gameState = {
         if (this.playbackRemaining > 0) {
           this.playbackRemaining--
           if (this.playbackRemaining === 0) {
-            logger.warn({ evt: this.playbackEvents[this.playbackIndex - 1] }, 'Playback Paused2')
+            //logger.warn({ evt: this.playbackEvents[this.playbackIndex - 1] }, 'Playback Paused2')
             this.pausePlayback()
             return
           }
@@ -213,7 +213,7 @@ const gameState = {
   pausePlayback () {
     this.playbackState = 'Paused'
     this.playbackRemaining = -1
-    logger.warn({ currentIndex: this.playbackIndex }, 'Playback Paused')
+    //logger.warn({ currentIndex: this.playbackIndex }, 'Playback Paused')
   },
 
   // stop playback, return to the beginning
@@ -225,7 +225,7 @@ const gameState = {
     this.playbackMagic++
     //this.resetGameState()
     this.playbackState = 'Paused'
-    logger.warn('Playback Stopped')
+    //logger.warn('Playback Stopped')
   },
 
   // find the playerState
@@ -237,7 +237,7 @@ const gameState = {
       playerObj.ranking = playerStateObj.ranking
       if (!playerObj.dead) { // make it dead
         playerObj.dead = true
-        logger.info({ guid: playerGuid, obj: playerObj }, 'Player is dead')
+        //logger.info({ guid: playerGuid, obj: playerObj }, 'Player is dead')
         this.showingPlayers.delete(playerGuid)
       }
     }
@@ -249,7 +249,7 @@ const gameState = {
       this.playerNameMap.set(playerStateObj.playerName, playerObj)
       if (this.teamMembers.has(playerObj.name) && !playerObj.friend) {
         playerObj.friend = true
-        logger.warn({ playerName: playerObj.name }, 'Player is friend because of his name')
+        //logger.warn({ playerName: playerObj.name }, 'Player is friend because of his name')
       }
     }
   },
@@ -274,10 +274,10 @@ const gameState = {
         this.resetGameState()
         this.gsTime = this.sTime = (event.time + this.playbackMagic)
         this.isDesert = !!event.data.isMiramar
-        logger.warn({ desert: this.isDesert, gsTime: event.time }, 'Game started')
+        //logger.warn({ desert: this.isDesert, gsTime: event.time }, 'Game started')
         break
       case TYPES.GAMESTOP:
-        logger.warn({ gsTime: this.gsTime }, 'Game stopped!!!!') // do we really get this event?
+        //logger.warn({ gsTime: this.gsTime }, 'Game stopped!!!!') // do we really get this event?
         break
       case TYPES.GAMESTATEUPDATE:
         if (event.data.safezone) {
@@ -411,12 +411,12 @@ const gameState = {
       case TYPES.TEAMUPDATE:
         if (event.data.playerName) {
           this.teamMembers.add(event.data.playerName)
-          logger.warn({ playerName: event.data.playerName }, 'GotTeam member playerName')
+          //logger.warn({ playerName: event.data.playerName }, 'GotTeam member playerName')
           // try to find the playerObj, set isTeam to true
           for (const p of this.players) {
             if (p.name === event.data.playerName) {
               p.friend = true
-              logger.warn({ obj: p }, 'SetA player to friend')
+              //logger.warn({ obj: p }, 'SetA player to friend')
             }
           }
         }

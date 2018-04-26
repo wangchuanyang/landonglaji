@@ -1,6 +1,7 @@
 const CONSTS = require('../constants')
 
 function processPlayer (buf, actor, repObj, waitingHandle, dataOut, iteration) {
+	//console.log(waitingHandle);
   switch (waitingHandle) {
     case 1:
       if (buf.readBit()) {
@@ -32,8 +33,9 @@ function processPlayer (buf, actor, repObj, waitingHandle, dataOut, iteration) {
       break
     case 6:
       const movement = buf.readMovement(true /* isMoving */, true /* isPlayer */)
+	  //console.log(movement);
       if (movement[0] >= 0 && movement[1] >= 0) { // readVecotr sometime might get me negative value, might be a bug
-        dataOut.newLoc = movement
+        //dataOut.newLoc = movement
       }
       break
     case 7:
@@ -64,7 +66,12 @@ function processPlayer (buf, actor, repObj, waitingHandle, dataOut, iteration) {
       buf.readInt(CONSTS.ROLE_MAX) // role
       break
     case 14:
-      buf.readBit()
+      //buf.readBit()
+	  const ovement = buf.readMovement(true /* isMoving */, true /* isPlayer */)
+	  //console.log(ovement);
+	  if (ovement[0] >= 0 && ovement[1] >= 0) { // readVecotr sometime might get me negative value, might be a bug
+        dataOut.newLoc = ovement
+      }
       break
     case 15:
       buf.readObject()
@@ -111,7 +118,7 @@ function processPlayer (buf, actor, repObj, waitingHandle, dataOut, iteration) {
       buf.readByte()
       break
     case 29:
-      buf.readBit()
+      buf.readBit()	  
       break
     case 30:
       buf.readFloat()

@@ -39,6 +39,7 @@ function processAPawn (buf, actor, repObj, waitingHandle, dataOut) {
         moving = false // low def location
       }
       const movement = buf.readMovement(moving /*isMoving*/, false /*isPlayer*/)
+	  //console.log(movement);
       if (movement[0] >= 0 && movement[1] >= 0) { // readVecotr sometime might get me negative value, might be a bug
         dataOut.newLoc = movement
       }
