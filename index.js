@@ -6,14 +6,13 @@ const gamestate = require('./backend/gamestate')
 const bunchStash = require('./backend/bunchstash')
 const CONSTS = require('./backend/constants')
 const Cap = require('cap').Cap
+const opn = require('opn');
 
 function printUsage () {
   console.log(
     `Usage:
-  * node index.js sniff <interface> <game_pc_ip>
-  * node index.js playback <pcapfile>
-Example: node index.js playback '/SOME/COOL/DIR/pubg-game1.pcap' | pino
-         node index.js sniff en5 192.168.0.100 | pino`
+  * node index.js <game_pc_ip>
+Example: node index.js 192.168.1.10`
   )
   process.exit(1)
 }
@@ -21,7 +20,9 @@ Example: node index.js playback '/SOME/COOL/DIR/pubg-game1.pcap' | pino
 function startWebServer () {
   const apiServerPort = 20086
   backend.listen(apiServerPort, () => {
-    console.log('Scientific Chicken Dinner listening on http://localhost:' + apiServerPort)
+    console.log('Game packets listening on http://localhost:' + apiServerPort);
+	console.log('Now, Start the Game!');
+	opn('http://localhost:' + apiServerPort);
   })
 }
 
@@ -33,16 +34,15 @@ function printStateOnConsole() {
 
 function main () {
   const args = process.argv.slice(2)
-  if (args.length < 2 || !['sniff', 'playback'].includes(args[0])) {
+  if (args.length < 1) {
     printUsage()
   }
-  if (args[0] === 'sniff') {
-    if (args.length !== 3) {
+    if (args.length !== 1) {
       printUsage()
     }
     const c = new Cap()
-    const device = args[1]
-    const filter = `(src host ${args[2]} and udp dst portrange 7000-7999) or (dst host ${args[2]} and udp src portrange 7000-7999)`
+	var device = Cap.findDevice(args[0]);
+    const filter = `(src host ${args[0]} and udp dst portrange 7000-7999) or (dst host ${args[0]} and udp src portrange 7000-7999)`
     const bufSize = 10 * 1024 * 1024
     const capBuffer = Buffer.alloc(65535)
     const linkType = c.open(device, filter, bufSize, capBuffer)
@@ -61,7 +61,7 @@ function main () {
         if (l2Evts) {
           for (const l2Evt of l2Evts) {
             if (l2Evt.type === CONSTS.EventTypes.ENCRYPTIONKEY) {
-              console.log(`Got EncryptionToken ${l2Evt.data.EncryptionToken}`)
+              //console.log(`Got EncryptionToken ${l2Evt.data.EncryptionToken}`)
               parser.setEncryptionToken(l2Evt.data.EncryptionToken)
             } else {
               if (l2Evt.type === CONSTS.EventTypes.GAMESTOP) {
@@ -75,48 +75,6 @@ function main () {
     })
     
     startWebServer()
-  } else if (args[0] === 'playback') {
-    const parser = PacketParser()
-    // read the file and get all the events out first
-    const pbyp = PacketByPacket(args[1])
-    const finalEvents = []
-    pbyp.on('packet', packet => {
-      const result = parser.parse(packet.data, packet.header.timestamp)
-      if (result != null) {
-        const l2Evts = bunchStash.feedEvent(result)
-        if (l2Evts) {
-          for (const l2Evt of l2Evts) {
-            if (l2Evt.type === CONSTS.EventTypes.ENCRYPTIONKEY) {
-              console.log(`Got EncryptionToken ${l2Evt.data.EncryptionToken}`)
-              parser.setEncryptionToken(l2Evt.data.EncryptionToken)
-            } else {
-              if (l2Evt.type === CONSTS.EventTypes.GAMESTOP) {
-                parser.clearEncryptionToken()
-              } else if (l2Evt.type === CONSTS.EventTypes.GAMESTART) {
-                // reset the state, so that stash can process further games
-                gamestate.resetGameState()
-              }
-              finalEvents.push(l2Evt)
-            }
-          }
-        }
-      }
-    })
-    pbyp.on('error', err => {
-      console.log('ERROR happened during parsing the pcap file', err)
-    })
-    pbyp.on('end', result => {
-      console.log('pcap file processing finished.', result)
-      if (finalEvents.length > 0) {
-        // now set the mode to playback and start the api server
-        gamestate.setPlaybackMode(finalEvents)
-        printStateOnConsole()
-        startWebServer()
-        gamestate.startPlayback(1.0, finalEvents.length)
-      }
-    })
-    pbyp.resume()
-  }
 }
 
 main()
