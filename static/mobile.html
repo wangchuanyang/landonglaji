@@ -7,34 +7,56 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://unpkg.com/openlayers@4.6.4/dist/ol.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css" />
-  <link rel="stylesheet" href="./app.css" />
-
-<script type="text/javascript">
-try {
-var urlhash = window.location.hash;
-if (!urlhash.match("fromapp"))
-{
-if ((navigator.userAgent.match(/(iPhone|iPod|Android|ios|iPad)/i)))
-{
-window.location="mobile.html";
-}
-}
-}
-catch(err)
-{
-}
-</script>
+  <link rel="stylesheet" href="./mobile.css" />
   <script src="https://unpkg.com/vue/dist/vue.js"></script>
   <script src="https://unpkg.com/openlayers"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="projection.js"></script>
+  <script type="text/javascript">
+function browserRedirect() {
+
+var sUserAgent= navigator.userAgent.toLowerCase();
+
+var bIsIpad= sUserAgent.match(/ipad/i) == "ipad";
+
+var bIsIphoneOs= sUserAgent.match(/iphone os/i) == "iphone os";
+
+var bIsMidp= sUserAgent.match(/midp/i) == "midp";
+
+var bIsUc7= sUserAgent.match(/rv:1.2.3.4/i) == "rv:1.2.3.4";
+
+var bIsUc= sUserAgent.match(/ucweb/i) == "ucweb";
+
+var bIsAndroid= sUserAgent.match(/android/i) == "android";
+
+var bIsCE= sUserAgent.match(/windows ce/i) == "windows ce";
+
+var bIsWM= sUserAgent.match(/windows mobile/i) == "windows mobile";
+
+if (bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM) {
+
+
+
+} else {
+
+window.location= 'index.html';
+
+}
+
+}
+
+browserRedirect();
+
+</script>
+
+
 </head>
 
 <body>
   <div id="app">
     <div class="sidenav" id="navBox" style="display:none;" >
       <section class="section">
-        <h1>云雷达4.23</h1>
+       <h1>云雷达4.23</h1>
         <p >作者：&nbsp;&nbsp;随</p>
 		<p >参考：&nbsp;&nbsp;尧</p>
         <!-- <div class="field is-grouped">
@@ -102,7 +124,7 @@ catch(err)
           <input type="checkbox" id="showPan" v-model="showPan"><label for="showPan">平底锅</label>
         <input type="checkbox" id="showitemall" v-model="showItemAll">
         <label for="showitemall">所有</label>
-        <hr>
+		<hr>
         <a class="button is-small" @click="setFPS(30)">fps30</a>
         <a class="button is-small" @click="setFPS(5)">fps5</a>
         <a class="button is-small" @click="setFPS(15)">fps15</a>
@@ -124,7 +146,7 @@ catch(err)
   </div>
  <div class="menuBox" id="menuBox"></div>
  <script src="app.js"></script>
-  <script src="menubox.js"></script>
+  <script src="mobile.js"></script>
 </body>
 
 </html>

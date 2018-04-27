@@ -10,14 +10,14 @@ html { overflow-y: hidden; }
 .sidenav {
   opacity:1;
   height: 100%; /* Full-height: remove this if you want "auto" height */
-  width: 16%; /* Set the width of the sidebar */
+  width: 70%; /* Set the width of the sidebar */
   position: fixed; /* Fixed Sidebar (stay in place on scroll) */
   z-index: 1; /* Stay on top */
-  top: 8%; /* Stay at the top */
+  top: 15%; /* Stay at the top */
   left: 0;
   background-color: rgba(0,0,0,0); 
   overflow-x: hidden; /* Disable horizontal scroll */
- color:	#FFFF00
+ color:#ffffff
 }
 /* Style page content */
 #map {
@@ -30,12 +30,12 @@ html { overflow-y: hidden; }
       top: 50%;
       left:0px;
       background: white;
-      background-color:rgba(255,255,0, 0.5);
+      background-color:rgba(255, 255, 0, 0.3);
       height: 10%;
       width: 1%;
       padding: 6px;
       display: block;
       border-top-right-radius:10px;
       border-bottom-right-radius:10px;
-      border:0px solid #ccc;
+      border:1px solid #ccc;
 }

@@ -1,6 +1,6 @@
 const appData = {
   autoRefresh: true,
-  refreshInterval: 1000,
+  refreshInterval: Math.floor(1000 / 60),
   gsTime: 0,
   me: [-1, -1, 0, 0],
   meGuid: -1,
@@ -30,9 +30,9 @@ vapp = new Vue({
     showAirDrop: true,
     showCar: true,
 
-    showItemTop: true,
-    showItemDuoDuo: true,
-    showItemBasic: true,
+    showItemTop: false,
+    showItemDuoDuo: false,
+    showItemBasic: false,
     showItemAR: false,
     showItemSR: false,
     showItemHealth: false,
@@ -47,31 +47,31 @@ vapp = new Vue({
     showHead2: true,
     showArmor3: true,
     showHead3: true,
-    showFirstAid: true,
-    showMedKit: true,
-    showDrink: true,
-    showGrenade: true,
+    showFirstAid: false,
+    showMedKit: false,
+    showDrink: false,
+    showGrenade: false,
     showSmokeBomb: false,
     showAmmo556: false,
     showAmmo762: false,
     showForeGrip: false,
     showLowST: false,
-    showHighST: true,
+    showHighST: false,
     showARCnFH: false,
-    showARSuppressor: true,
+    showARSuppressor: false,
     showARExtended: false,
     showARStock: false,
     showSRFlashHider: false,
-    showSRSuppressor: true,
+    showSRSuppressor: false,
     showSRExtended: false,
     showSRStock: false,
-    showM16A4: false,
+    showM16A4: true,
     showSCAR: true,
-    showAK47: false,
+    showAK47: true,
     showHK416: true,
     showPan: true,
-    showMini14: false,
-    showSKS: false,
+    showMini14: true,
+    showSKS: true,
     showKar98k: true,
 
     // --------------------------------------------------------------------------
@@ -303,7 +303,7 @@ const carSvgImg = new Image()
 carSvgImg.src = 'data:image/svg+xml,' + escape(carSvg)
 
 const carRedSvg = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">' +
-'<path fill="#FFFF2020" id="svg_2" d="m9.86048,0.09798l-3.95767,0c-1.04907,0 -1.89924,1.16687 -1.89924,2.21595l0,11.71383c0,1.04874 0.85016,1.89958 1.89924,1.89958l3.95767,0c1.04874,0 1.89958,-0.8505 1.89958,-1.89958l0,-11.71383c-0.00067,-1.04907 -0.85084,-2.21595 -1.89958,-2.21595zm1.56671,4.77519l0,3.92604l-0.91849,0.11813l0,-1.61753l0.91849,-2.42664zm-0.48196,-1.14937c-0.34195,1.31261 -0.74684,2.86417 -0.74684,2.86417l-4.63383,0l-0.74785,-2.86417c0.00034,0 2.99005,-1.01575 6.12852,0zm-5.68022,3.68203l0,1.51185l-0.91882,-0.11746l0,-3.82137l0.91882,2.42697zm-0.91882,5.46078l0,-3.48648l0.91882,0.11544l0,2.75849l-0.91882,0.61255zm0.52403,0.99085l0.7465,-1.12278l4.63484,0l0.74684,1.12278l-6.12819,0zm5.63848,-1.70874l0,-2.64944l0.91849,-0.11948l0,3.38181l-0.91849,-0.61289z"/></svg>'
+'<path fill="#FF2020FF" id="svg_2" d="m9.86048,0.09798l-3.95767,0c-1.04907,0 -1.89924,1.16687 -1.89924,2.21595l0,11.71383c0,1.04874 0.85016,1.89958 1.89924,1.89958l3.95767,0c1.04874,0 1.89958,-0.8505 1.89958,-1.89958l0,-11.71383c-0.00067,-1.04907 -0.85084,-2.21595 -1.89958,-2.21595zm1.56671,4.77519l0,3.92604l-0.91849,0.11813l0,-1.61753l0.91849,-2.42664zm-0.48196,-1.14937c-0.34195,1.31261 -0.74684,2.86417 -0.74684,2.86417l-4.63383,0l-0.74785,-2.86417c0.00034,0 2.99005,-1.01575 6.12852,0zm-5.68022,3.68203l0,1.51185l-0.91882,-0.11746l0,-3.82137l0.91882,2.42697zm-0.91882,5.46078l0,-3.48648l0.91882,0.11544l0,2.75849l-0.91882,0.61255zm0.52403,0.99085l0.7465,-1.12278l4.63484,0l0.74684,1.12278l-6.12819,0zm5.63848,-1.70874l0,-2.64944l0.91849,-0.11948l0,3.38181l-0.91849,-0.61289z"/></svg>'
 const carRedSvgImg = new Image()
 carRedSvgImg.src = 'data:image/svg+xml,' + escape(carRedSvg)
 
@@ -678,18 +678,18 @@ const renderMap = () => {
       )
     } else { // enemy
       if (playerObj.team) {
-        label = `${playerObj.team}`
+        label = `队${playerObj.team}`
       } else if (playerObj.name) {
         label = playerObj.name
       } else {
         label = `<${playerObj.guid}>`
       }
       if (playerObj.kills) {
-        label += `(${playerObj.kills})`
+        label += `杀${playerObj.kills}`
       }
     }
     if (playerObj.health != null) {
-      label += `@${Math.floor(playerObj.health)}`
+      label += `血${Math.floor(playerObj.health)}`
     }
     feature.set('_label', label)
     // re-add should be fine
