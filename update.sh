@@ -1,8 +1,8 @@
 #!/bin/bash
-echo "欢迎使用一键搭建"
-echo "即将搭建的是4.26版本"
-echo "准备开始安装"
-read -p "回车后开始安装"
+echo "欢迎使用网页雷达一键脚本"
+echo "即将搭建的是随的4.23版本"
+echo "请输入交流群号"
+read -p "交流群： " qun
 echo "请输入你的内网ip" 
 read -p "内网ip： " ip
 cp /root/winnerpubg/restart.sh /root/restart.sh
@@ -28,8 +28,8 @@ cd libpcap-1.8.1
 make
 make install
 
-git clone https://github.com/794959818/PUBG-Radar-Onekey.git
-cd PUBG-Radar-Onekey/
+git clone https://github.com/chaojibinbin/winnerpubg.git
+cd winnerpubg/
 npm i
 npm i -g pino
 npm install -g forever
