@@ -1,6 +1,6 @@
 const appData = {
   autoRefresh: true,
-  refreshInterval: Math.floor(1000 / 30),
+  refreshInterval: 1000,
   gsTime: 0,
   me: [-1, -1, 0, 0],
   meGuid: -1,
@@ -17,6 +17,7 @@ const appData = {
   itemFeatures: new Map(), // itemguid -> olFeature
 }
 
+// vue app just for html map option control
 vapp = new Vue({
   el: '#app',
   data: {
@@ -25,7 +26,7 @@ vapp = new Vue({
     mapType: 'erangel',
     followMe: true,
     isDesert: false,
-    showBox: true,
+    showBox: false,
     showAirDrop: true,
     showCar: true,
 
@@ -37,7 +38,7 @@ vapp = new Vue({
     showItemHealth: false,
     showItemThrow: false,
     showItemAmmo: false,
-    showItemAll: true,
+    showItemAll: false,
 
     // --------------------------------------------------------------------------
 
@@ -76,7 +77,7 @@ vapp = new Vue({
     // --------------------------------------------------------------------------
 
     coordinate: '',
-    toggleButtonText: ''
+    toggleButtonText: '停止刷新'
   },
   watch: {
     mapType: (val) => {
@@ -92,6 +93,30 @@ vapp = new Vue({
         return 0b11111111111111111111111111111111
       }
       let flags = 0
+      // if (this.showItemTop) {
+      //   flags |= 0b1000000000000000
+      // }
+      // if (this.showItemDuoDuo) {
+      //   flags |= 0b0100000000000000 // 雷 水 疼 急
+      // }
+      // if (this.showItemBasic) {
+      //   flags |= 0b0001010100010000 // 基本出装: 穿戴 | 步枪 | 瞄准 | 狙枪
+      // }
+      // if (this.showItemAR) {
+      //   flags |= 0b0000011000000000 // 步枪和配件
+      // }
+      // if (this.showItemSR) {
+      //   flags |= 0b0000000110000000 // 狙击和配件
+      // }
+      // if (this.showItemHealth) {
+      //   flags |= 0b0000100000000000
+      // }
+      // if (this.showItemThrow) {
+      //   flags |= 0b0000000001000000
+      // }
+      // if (this.showItemAmmo) {
+      //   flags |= 0b0000000000100000
+      // }
       if (this.showBack) {
         flags |= 0b00000000000000000000000000001000
       }
@@ -208,13 +233,17 @@ vapp = new Vue({
 })
 
 const projection = ol.proj.get('EPSG:21781')
+// The extent is used to determine zoom level 0. Recommended values for a
+// projection's validity extent can be found at https://epsg.io/.
+// 0,0 at left bottom, 0, 8192 at left top
 projection.setExtent([0, 0, 8192, 8192])
 
 function getMapSource (mapType) {
   const mapPath = mapType === 'erangel'
     ? 'erangel/v11'
     : 'miramar/v5'
-  let useLocalResource = true
+  // if false, will use https://tiles2-v2.pubgmap.net/tiles/erangel/v11/{z}/{x}/{y}.png not sure if it is stable or not. But it will have more zoom, up to 5. Local only has up to 4
+  let useLocalResource = false
   const mapBase = useLocalResource
     ? '../maptiles'
     : 'https://tiles2-v2.pubgmap.net/tiles'
@@ -274,7 +303,7 @@ const carSvgImg = new Image()
 carSvgImg.src = 'data:image/svg+xml,' + escape(carSvg)
 
 const carRedSvg = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">' +
-'<path fill="#FF2020FF" id="svg_2" d="m9.86048,0.09798l-3.95767,0c-1.04907,0 -1.89924,1.16687 -1.89924,2.21595l0,11.71383c0,1.04874 0.85016,1.89958 1.89924,1.89958l3.95767,0c1.04874,0 1.89958,-0.8505 1.89958,-1.89958l0,-11.71383c-0.00067,-1.04907 -0.85084,-2.21595 -1.89958,-2.21595zm1.56671,4.77519l0,3.92604l-0.91849,0.11813l0,-1.61753l0.91849,-2.42664zm-0.48196,-1.14937c-0.34195,1.31261 -0.74684,2.86417 -0.74684,2.86417l-4.63383,0l-0.74785,-2.86417c0.00034,0 2.99005,-1.01575 6.12852,0zm-5.68022,3.68203l0,1.51185l-0.91882,-0.11746l0,-3.82137l0.91882,2.42697zm-0.91882,5.46078l0,-3.48648l0.91882,0.11544l0,2.75849l-0.91882,0.61255zm0.52403,0.99085l0.7465,-1.12278l4.63484,0l0.74684,1.12278l-6.12819,0zm5.63848,-1.70874l0,-2.64944l0.91849,-0.11948l0,3.38181l-0.91849,-0.61289z"/></svg>'
+'<path fill="#FFFF2020" id="svg_2" d="m9.86048,0.09798l-3.95767,0c-1.04907,0 -1.89924,1.16687 -1.89924,2.21595l0,11.71383c0,1.04874 0.85016,1.89958 1.89924,1.89958l3.95767,0c1.04874,0 1.89958,-0.8505 1.89958,-1.89958l0,-11.71383c-0.00067,-1.04907 -0.85084,-2.21595 -1.89958,-2.21595zm1.56671,4.77519l0,3.92604l-0.91849,0.11813l0,-1.61753l0.91849,-2.42664zm-0.48196,-1.14937c-0.34195,1.31261 -0.74684,2.86417 -0.74684,2.86417l-4.63383,0l-0.74785,-2.86417c0.00034,0 2.99005,-1.01575 6.12852,0zm-5.68022,3.68203l0,1.51185l-0.91882,-0.11746l0,-3.82137l0.91882,2.42697zm-0.91882,5.46078l0,-3.48648l0.91882,0.11544l0,2.75849l-0.91882,0.61255zm0.52403,0.99085l0.7465,-1.12278l4.63484,0l0.74684,1.12278l-6.12819,0zm5.63848,-1.70874l0,-2.64944l0.91849,-0.11948l0,3.38181l-0.91849,-0.61289z"/></svg>'
 const carRedSvgImg = new Image()
 carRedSvgImg.src = 'data:image/svg+xml,' + escape(carRedSvg)
 
@@ -377,12 +406,12 @@ const gridSource = new ol.source.Vector({
 })
 const majorLineStyle = new ol.style.Style({
   stroke: new ol.style.Stroke({
-    color: [255, 255, 0, 0.4]
+    color: [255, 255, 0, 0.6]
   })
 })
 const minorLineStyle = new ol.style.Style({
   stroke: new ol.style.Stroke({
-    color: [0xcc, 0xcc, 0xcc, 0.2]
+    color: [0xcc, 0xcc, 0xcc, 0.4]
   })
 })
 const gridLayer = new ol.layer.Vector({
@@ -649,18 +678,18 @@ const renderMap = () => {
       )
     } else { // enemy
       if (playerObj.team) {
-        //label = `${playerObj.team}`
+        label = `${playerObj.team}`
       } else if (playerObj.name) {
         label = playerObj.name
       } else {
-        //label = `<${playerObj.guid}>`
+        label = `<${playerObj.guid}>`
       }
       if (playerObj.kills) {
-        label += ` Kill${playerObj.kills}`
+        label += `(${playerObj.kills})`
       }
     }
     if (playerObj.health != null) {
-      //label += ` Health${Math.floor(playerObj.health)}`
+      label += `@${Math.floor(playerObj.health)}`
     }
     feature.set('_label', label)
     // re-add should be fine
